@@ -1,0 +1,111 @@
+/* --- Text Color --- */
+
+@utility text-primary {
+  @apply text-blue-500 hover:text-blue-600;
+}
+
+@utility text-danger {
+  @apply text-red-500 hover:text-red-600;
+}
+
+@utility text-success {
+  @apply text-emerald-500 hover:text-emerald-600;
+}
+
+@utility text-warning {
+  @apply text-amber-500 hover:text-amber-600;
+}
+
+@utility text-info {
+  @apply text-sky-500 hover:text-sky-600;
+}
+
+@utility text-dark {
+  @apply text-slate-900 hover:text-slate-800;
+}
+
+@utility text-light {
+  @apply text-slate-100 hover:text-slate-200;
+}
+
+@utility text-muted {
+  @apply text-gray-200 hover:text-gray-300;
+}
+
+@utility text-link {
+  @apply bg-transparent text-blue-500 hover:text-blue-600;
+}
+
+@utility text-mz-firefox-dark {
+  color: #282932;
+}
+
+/* --- Background Color --- */
+@utility bg-link {
+  @apply bg-transparent text-blue-500 hover:text-blue-600;
+}
+
+@utility bg-primary {
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+@utility bg-danger {
+  @apply bg-red-500 text-white hover:bg-red-600;
+}
+
+@utility bg-success {
+  @apply bg-green-600 text-white hover:bg-green-700;
+}
+
+@utility bg-warning {
+  @apply bg-amber-500 text-gray-900 hover:bg-amber-600;
+}
+
+@utility bg-info {
+  @apply bg-sky-500 text-white hover:bg-sky-600;
+}
+
+@utility bg-dark {
+  @apply bg-slate-900 text-white hover:bg-slate-800;
+}
+
+@utility bg-light {
+  @apply bg-slate-100 text-slate-900 hover:bg-slate-200;
+}
+
+@utility bg-cancel {
+  @apply bg-gray-500 text-white hover:bg-gray-600;
+}
+
+@utility bg-muted {
+  @apply bg-gray-200 text-gray-600 hover:bg-gray-300;
+}
+
+@utility bg-mz-firefox-dark {
+  @apply bg-[#282932] text-white;
+}
+
+/* --- Background Linear To Bottom Right Color --- */
+@utility bg-primary-linear-br {
+  @apply bg-linear-to-br from-sky-400 via-blue-600 to-indigo-900 text-white select-none;
+}
+
+@utility bg-danger-linear-br {
+  @apply bg-linear-to-br from-rose-400 via-red-600 to-amber-900 text-white select-none;
+}
+
+@utility bg-success-linear-br {
+  @apply bg-linear-to-br from-emerald-400 via-teal-600 to-cyan-900 text-white select-none;
+}
+
+@utility bg-warning-linear-br {
+  @apply bg-linear-to-br from-amber-300 via-orange-500 to-yellow-600 text-slate-900 select-none;
+}
+
+@utility bg-info-linear-br {
+  @apply bg-linear-to-br from-cyan-400 via-sky-500 to-blue-700 text-white select-none;
+}
+
+@utility bg-dark-linear-br {
+  @apply bg-linear-to-br from-slate-800 via-zinc-900 to-black text-white select-none;
+}

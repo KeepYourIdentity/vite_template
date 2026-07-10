@@ -1,0 +1,5 @@
+<component name="EslintConfiguration">
+    <option name="enabled" value="false" />
+    <option name="fix-on-save" value="false" />
+    <option name="run-for-files" value="**/*.{js,ts,jsx,tsx,vue,html}" />
+</component>

@@ -1,0 +1,51 @@
+@import "tailwindcss";
+@import "color.css";
+
+/* --- Custom Conditional --- */
+@custom-variant not-disabled (:not(:disabled) &);
+
+/* --- Custom Animation --- */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes pulse-bar {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scaleY(0.4);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@theme {
+  --animate-shimmer: shimmer 0.8s infinite;
+
+  /* hanya template dan tidak ada jaminan, buat sendiri animasinya */
+  --animate-pulse-bar: pulse-bar 1s ease-in-out infinite;
+}
+
+/* --- Custom Utility --- */
+@utility small-caps {
+  font-variant: small-caps;
+}
+
+@utility x-center {
+  @apply flex justify-center;
+}
+
+@utility y-center {
+  @apply flex items-center;
+}
+
+@utility xy-center {
+  @apply flex justify-center items-center;
+}

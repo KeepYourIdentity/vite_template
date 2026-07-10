@@ -1,0 +1,19 @@
+{
+	"axios": "npm install axios axios-retry",
+	"browser-image-compression": "npm install browser-image-compression",
+	"chart.js": "npm install chart.js react-chartjs-2",
+	"color-string": "npm install color-string",
+	"file-saver": "npm install file-saver",
+	"lucide-react": "npm install lucide-react",
+	"md5": "npm install md5 && npm install -D @types/md5",
+	"motion": "npm install motion",
+	"pure-md5": "npm install pure-md5",
+	"react-number-format": "npm install react-number-format",
+	"react-router-dom": "npm install react-router-dom",
+	"react-select": "npm install react-select",
+    "react-toastify": "npm install react-toastify",
+	"react-window": "npm install react-window",
+	"xlsx": "npm install https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
+	"zod": "npm install zod",
+	"zustand": "npm install zustand"
+}
