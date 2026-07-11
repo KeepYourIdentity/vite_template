@@ -71,5 +71,6 @@ const env = success
   : null;
 const envError = success ? null : error;
 const envValid = success;
+const treeifyError = (err: z.ZodError) => z.treeifyError(err);
 
-export { env, envError, envValid };
+export { env, envError, envValid, treeifyError };
