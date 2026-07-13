@@ -1,5 +1,5 @@
 import { Component } from "react";
-import SystemError from "./SystemError";
+import ErrorUI from "./ErrorUI";
 
 import type { ErrorInfo, ReactNode } from "react";
 
@@ -32,7 +32,7 @@ export default class GlobalErrorBoundary extends Component<ErrorBoundaryProps, E
   render(): ReactNode {
     if (this.state.hasError) {
       return (
-        <SystemError
+        <ErrorUI
           title="Terjadi Kesalahan Sistem"
           message="Sistem mengalami gangguan yang tidak terduga. Silakan muat ulang halaman."
           rawError={this.state.error}
