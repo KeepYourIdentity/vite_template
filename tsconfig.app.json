@@ -33,7 +33,8 @@
     "paths": {
       "~/*": ["./src/*"],
       "core/*": ["./src/core/*"],
-      "features/*": ["./src/features/*"]
+      // "features/*": ["./src/features/*"],
+      "mocks/*": ["./src/features/mocks/*"],
     }
   },
   "include": ["src"],

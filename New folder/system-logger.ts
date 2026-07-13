@@ -1,6 +1,6 @@
+import cluster from "cluster";
 import fs from "fs";
 import path from "path";
-import cluster from "cluster";
 
 const LOG_CONFIG = {
   DIR: path.join(process.cwd(), "system-logs"),
@@ -29,8 +29,7 @@ const COLORS: Record<LogLevel | "reset", string> = {
   reset: "\x1b[0m",
 } as const;
 
-const SENSITIVE_KEY_PATTERN =
-  /(password|pass|token|authorization|secret|apikey|api_key|pin|cvv|otp|cookie|bearer)/i;
+const SENSITIVE_KEY_PATTERN = /(password|pass|token|authorization|secret|apikey|api_key|pin|cvv|otp|cookie|bearer)/i;
 
 const getEnv = (): string => process.env.NODE_ENV || "development";
 const getAppName = (): string => process.env.APP_NAME || "Unknown";
@@ -69,10 +68,7 @@ const normalizeMetadata = (key: string, value: unknown): unknown => {
 
   if (typeof value === "object" && value !== null) {
     return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>).map(([k, v]) => [
-        k,
-        normalizeMetadata(k, v),
-      ]),
+      Object.entries(value as Record<string, unknown>).map(([k, v]) => [k, normalizeMetadata(k, v)])
     );
   }
 
@@ -84,16 +80,12 @@ const serializeMetadata = (metadata: LogMetadata): string => {
 
   const parts = Object.entries(metadata).map(([k, v]) => {
     const normalized = normalizeMetadata(k, v);
-    const str =
-      typeof normalized === "object" && normalized !== null
-        ? JSON.stringify(normalized)
-        : String(normalized);
+    const str = typeof normalized === "object" && normalized !== null ? JSON.stringify(normalized) : String(normalized);
     return `${k}=${str}`;
   });
 
   return ` || [${parts.join(" | ")}]`;
 };
-
 
 class SystemLogger {
   private currentDate: string;
@@ -140,7 +132,7 @@ class SystemLogger {
     method: string,
     url: string,
     ip: string,
-    headers: Record<string, string | string[] | undefined> = {},
+    headers: Record<string, string | string[] | undefined> = {}
   ): void {
     this.info("REQUEST", `${method} ${url}`, {
       ip,
@@ -152,13 +144,7 @@ class SystemLogger {
     this.success("RESPONSE", `${method} ${url} -> ${status}`, { durationMs });
   }
 
-  responseError(
-    method: string,
-    url: string,
-    status: number,
-    error: unknown,
-    durationMs: number,
-  ): void {
+  responseError(method: string, url: string, status: number, error: unknown, durationMs: number): void {
     this.error("RESPONSE", `${method} ${url} -> ${status}`, {
       error: error instanceof Error ? error : String(error),
       durationMs,
@@ -174,7 +160,6 @@ class SystemLogger {
     if (this.isShuttingDown) return;
 
     try {
-      
       const today = getDateString();
       if (today !== this.currentDate) {
         this._rotateStream(today);
@@ -185,12 +170,9 @@ class SystemLogger {
       if (this.writeStream?.writable) {
         this.writeStream.write(`${entry}\n`);
       }
-      
 
       this._writeToConsole(level, entry);
-    } catch {
-      
-    }
+    } catch {}
   }
 
   private _format(level: LogLevel, category: string, message: string, metadata: LogMetadata): string {
@@ -206,7 +188,7 @@ class SystemLogger {
 
   private _writeToConsole(level: LogLevel, entry: string): void {
     const colored = `${COLORS[level]}${entry}${COLORS.reset}`;
-    
+
     if (level === "error" || level === "warn") {
       process.stderr.write(`${colored}\n`);
     } else {
@@ -226,7 +208,6 @@ class SystemLogger {
 
     const stream = fs.createWriteStream(filePath, { flags: "a" });
 
-    
     stream.on("error", (err) => {
       process.stderr.write(`[SYSTEM LOGGER] Stream error: ${err.message}\n`);
     });
@@ -245,10 +226,8 @@ class SystemLogger {
     this.currentDate = newDate;
     this.logFilePath = this._buildFilePath(newDate);
 
-    
     this._openStream();
 
-    
     if (oldStream) {
       oldStream.end(() => {
         process.stdout.write(`[SYSTEM LOGGER] Rotated log to: system-${newDate}.log\n`);
@@ -297,7 +276,6 @@ class SystemLogger {
       const farewell = `\n[${getTimestamp()}] [SYSTEM] Logger shutting down (${signal})...\n`;
 
       if (this.writeStream?.writable) {
-        
         this.writeStream.write(farewell, () => {
           this.writeStream!.end();
         });
@@ -305,10 +283,10 @@ class SystemLogger {
     };
 
     process.once("exit", () => shutdown("exit"));
- 
+
     process.once("SIGTERM", () => {
       shutdown("SIGTERM");
-      
+
       setTimeout(() => process.exit(0), 300);
     });
 

@@ -1,6 +1,7 @@
 {
   // Override global → pakai Biome di project ini
   "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": false,
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit",
     "source.organizeImports.biome": "explicit"

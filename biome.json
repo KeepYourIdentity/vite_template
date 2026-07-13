@@ -83,9 +83,7 @@
   },
   "overrides": [
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "linter": {
         "rules": {
           "complexity": {
@@ -153,9 +151,7 @@
       }
     },
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "javascript": {
         "globals": []
       }
@@ -207,9 +203,7 @@
       }
     },
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "linter": {
         "rules": {
           "complexity": {
@@ -239,9 +233,7 @@
       }
     },
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "linter": {
         "rules": {
           "correctness": {
@@ -252,17 +244,13 @@
       }
     },
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "linter": {
         "rules": {}
       }
     },
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "javascript": {
         "globals": [
           "onanimationend",
@@ -394,9 +382,7 @@
       }
     },
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "linter": {
         "rules": {
           "complexity": {
@@ -464,9 +450,7 @@
       }
     },
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "javascript": {
         "globals": []
       }
@@ -518,9 +502,7 @@
       }
     },
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "linter": {
         "rules": {
           "complexity": {
@@ -550,9 +532,7 @@
       }
     },
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "linter": {
         "rules": {
           "correctness": {
@@ -563,17 +543,13 @@
       }
     },
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "linter": {
         "rules": {}
       }
     },
     {
-      "includes": [
-        "**/*.{ts,tsx}"
-      ],
+      "includes": ["**/*.{ts,tsx}"],
       "javascript": {
         "globals": [
           "onanimationend",
@@ -714,32 +690,20 @@
             "groups": [
               {
                 "type": false,
-                "source": [
-                  ":NODE:",
-                  ":PACKAGE:"
-                ]
+                "source": [":NODE:", ":PACKAGE:"]
               },
               {
                 "type": false,
-                "source": [
-                  ":ALIAS:",
-                  ":PATH:"
-                ]
+                "source": [":ALIAS:", ":PATH:"]
               },
               ":BLANK_LINE:",
               {
                 "type": true,
-                "source": [
-                  ":NODE:",
-                  ":PACKAGE:"
-                ]
+                "source": [":NODE:", ":PACKAGE:"]
               },
               {
                 "type": true,
-                "source": [
-                  ":ALIAS:",
-                  ":PATH:"
-                ]
+                "source": [":ALIAS:", ":PATH:"]
               }
             ]
           }

@@ -64,7 +64,7 @@ export default defineConfig(({ mode }: { mode: string }) => {
     build: {
       rolldownOptions: {
         external: [
-          fileURLToPath(new URL("./src/mocks", import.meta.url)),
+          fileURLToPath(new URL("./src/features/mocks", import.meta.url)),
           fileURLToPath(new URL("./src/features/Development", import.meta.url)),
           fileURLToPath(new URL("./src/features/development", import.meta.url)),
         ],
@@ -74,7 +74,8 @@ export default defineConfig(({ mode }: { mode: string }) => {
       alias: {
         "~": path.resolve(__dirname, "./src"),
         core: path.resolve(__dirname, "./src/core"),
-        features: path.resolve(__dirname, "./src/features"),
+        // features: path.resolve(__dirname, "./src/features"),
+        mocks: path.resolve(__dirname, "./src/features/mocks"),
       },
     },
   };
