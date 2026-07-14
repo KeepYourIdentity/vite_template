@@ -1,4 +1,4 @@
-import { DeepFreeze, type DeepReadonly } from "core/utils";
+import { DeepFreeze } from "core/utils";
 import { z } from "zod";
 
 const schema = z.object({
@@ -39,6 +39,11 @@ const schema = z.object({
     .trim()
     .transform((val) => Number.parseInt(val, 10))
     .pipe(z.number().int().min(1).catch(3)),
+  SERVER_NEED_HEADER_WHILE_REQUEST: z
+    .string()
+    .trim()
+    .transform((val) => ["1", "true", "yes", "on"].includes(val.toLowerCase()))
+    .pipe(z.boolean()),
 });
 
 const source = {
@@ -52,11 +57,14 @@ const source = {
   SERVER_LOGGING: import.meta.env.VITE_SERVER_LOGGING,
   SERVER_TIMEOUT: import.meta.env.VITE_SERVER_TIMEOUT,
   SERVER_RETRY_COUNT: import.meta.env.VITE_SERVER_RETRY_COUNT,
+  SERVER_NEED_HEADER_WHILE_REQUEST: import.meta.env.VITE_SERVER_NEED_HEADER_WHILE_REQUEST,
 } as const;
 
 const { success, data, error } = schema.safeParse(source);
 
-const env = DeepFreeze<typeof data | null>(
+
+export type envSchema = z.infer<typeof schema>;
+export const env = DeepFreeze<envSchema | null>(
   success
     ? {
         WEBSITE_NAME: data.WEBSITE_NAME as string,
@@ -69,11 +77,10 @@ const env = DeepFreeze<typeof data | null>(
         SERVER_LOGGING: data.SERVER_LOGGING as boolean,
         SERVER_TIMEOUT: data.SERVER_TIMEOUT as number,
         SERVER_RETRY_COUNT: data.SERVER_RETRY_COUNT as number,
+        SERVER_NEED_HEADER_WHILE_REQUEST: data.SERVER_NEED_HEADER_WHILE_REQUEST as boolean
       }
     : null
 );
-const envError = success ? null : error;
-const envValid = success;
-const treeifyError = (err: z.ZodError) => z.treeifyError(err);
-
-export { env, envError, envValid, treeifyError };
+export const envError = success ? null : error;
+export const envValid = success;
+export const treeifyError = (err: z.ZodError) => z.treeifyError(err);

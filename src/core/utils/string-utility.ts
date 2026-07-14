@@ -1,6 +1,6 @@
-import { DeepFreeze } from "src/utils";
+import { DeepFreeze } from "core/utils";
 
-import type { DeepReadonly } from "src/utils";
+import type { DeepReadonly } from "core/utils";
 
 export type RandomStringVariant = "MIX" | "UPPERALPHA" | "LOWERALPHA" | "NUMERIC";
 

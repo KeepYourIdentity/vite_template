@@ -1,5 +1,5 @@
-export {};
+export { };
 
-declare global {
-    
-}
+// declare global {
+//     declare
+// }

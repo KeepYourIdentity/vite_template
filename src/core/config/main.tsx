@@ -1,3 +1,4 @@
+import ErrorUI from "core/assets/static/ErrorUI";
 import GlobalErrorBoundary from "core/assets/static/GlobalErrorBoundary";
 import "core/assets/style/index.css";
 import { AlertTriangle, CheckCircle2, CircleAlert, Info } from "lucide-react";
@@ -5,7 +6,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastContainer } from "react-toastify";
 import App from "~/App.tsx";
-import ErrorUI from "~/core/assets/static/ErrorUI";
 import { env, envError, envValid, treeifyError } from "./env";
 
 import type { ReactElement } from "react";
@@ -56,7 +56,7 @@ if (!appEnv) {
   createRoot(root).render(
     <div className={rootClassName}>
       <GlobalErrorBoundary>{appContent}</GlobalErrorBoundary>
-      <ToastContainer icon={customToastIcon} theme="colored" position="top-right" />
+      <ToastContainer icon={customToastIcon} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
+import PageErrorBoundary from "core/assets/static/PageErrorBoundary";
+import { SuspenseHandler } from "core/utils/SuspenseHandler";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
-import PageErrorBoundary from "~/core/assets/static/PageErrorBoundary";
-import { SuspenseHandler } from "~/core/utils/SuspenseHandler";
 
 export default function AppRoutes() {
   const lastPath = "";
