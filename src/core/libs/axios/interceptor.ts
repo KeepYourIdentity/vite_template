@@ -3,7 +3,7 @@ import { DeepThawed, local, session } from "core/utils";
 import md5 from "md5";
 import { handleRedacted, requestRedactedLogs } from "./config";
 import { BASE_ENDPOINT, getToastId, instance, NEED_HEADER, needLog, SECRET_KEY } from "./instance";
-import { canonicalStringify, generateSignature, logout } from "./utility";
+import { canonicalStringify, generateSignature, logout } from "./utils";
 
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import type {
