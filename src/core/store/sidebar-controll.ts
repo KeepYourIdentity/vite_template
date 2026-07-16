@@ -10,10 +10,10 @@ export interface SidebarControllState {
 export const useSidebarControll = create<SidebarControllState>((set) => ({
   isSidebarOpen: false,
   isSidebarShow: true,
-  toggleSidebarOpen: (condition = "DEFAULT") => {
+  toggleSidebarOpen(condition = "DEFAULT") {
     set((state) => ({ isSidebarOpen: condition === "DEFAULT" ? !state.isSidebarOpen : condition }));
   },
-  toggleSidebarShow: (condition: boolean) => {
-    set(() => ({ isSidebarShow: condition }));
+  toggleSidebarShow(condition: boolean) {
+    set({ isSidebarShow: condition });
   },
 }));

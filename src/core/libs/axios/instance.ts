@@ -1,13 +1,12 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
-import { env } from "core/config/env";
 import { generatorRandomString } from "core/utils";
+import { useEnvStore } from "~/core/store";
 import { handleRetryCondition } from "./config";
 
 import type { AxiosInstance } from "axios";
-import type { envSchema } from "core/config/env";
 
-const newEnv = env as envSchema;
+const newEnv = useEnvStore.getState().env;
 const BASE_ENDPOINT = newEnv.SERVER_BASE_PATH;
 const SECRET_KEY = newEnv.SERVER_PUBLIC_KEY;
 const NEED_HEADER = newEnv.SERVER_NEED_HEADER_WHILE_REQUEST;

@@ -3,16 +3,16 @@ import { create } from "zustand";
 
 export interface DarkThemeState {
   isDarkTheme: boolean;
-  toggleDarkTheme: () => void;
+  toggleDarkTheme: (val?: boolean) => void;
   initial: () => void;
 }
 
 export const useDarkTheme = create<DarkThemeState>((set) => ({
   isDarkTheme: false,
-  toggleDarkTheme: (val?: boolean) => {
+  toggleDarkTheme(val) {
     set((state) => ({ isDarkTheme: typeof val === "boolean" ? val : !state.isDarkTheme }));
   },
-  initial: () => {
+  initial() {
     const darkThemeFlag = local.get<boolean>("localDarkTheme") || false;
     set({ isDarkTheme: darkThemeFlag });
   },

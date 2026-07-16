@@ -1,3 +1,4 @@
+// import "./src/core/config/loader"
 // biome-ignore assist/source/organizeImports: sorter conflict, cause with `@` sign handlers of each sorter
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
@@ -74,8 +75,9 @@ export default defineConfig(({ mode }: { mode: string }) => {
       alias: {
         "~": path.resolve(__dirname, "./src"),
         core: path.resolve(__dirname, "./src/core"),
-        // features: path.resolve(__dirname, "./src/features"),
+        features: path.resolve(__dirname, "./src/features"),
         mocks: path.resolve(__dirname, "./src/features/mocks"),
+        ui: path.resolve(__dirname, "./src/features/ui"),
       },
     },
   };
