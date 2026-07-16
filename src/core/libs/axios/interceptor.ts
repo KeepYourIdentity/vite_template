@@ -1,8 +1,9 @@
 import { _Dismiss, _Err, _Pass, _Pending, _Up } from "core/libs/react-toastify";
-import { canonicalStringify, DeepThawed, generateSignature, local, logout, session } from "core/utils";
+import { DeepThawed, local, session } from "core/utils";
 import md5 from "md5";
 import { handleRedacted, requestRedactedLogs } from "./config";
 import { BASE_ENDPOINT, getToastId, instance, NEED_HEADER, needLog, SECRET_KEY } from "./instance";
+import { canonicalStringify, generateSignature, logout } from "./utility";
 
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import type {
@@ -35,9 +36,9 @@ instance.interceptors.request.use(
 
     const fullPath = path.startsWith("http")
       ? path + queryString.join("")
-      : BASE_ENDPOINT + path + queryString.join("");
+      : BASE_ENDPOINT() + path + queryString.join("");
 
-    if (NEED_HEADER) {
+    if (NEED_HEADER()) {
       /** @deprecated support until an unspecified time limit */
       const token: string = session.get("sessionToken") || local.get("sessionToken") || "";
 
@@ -46,7 +47,7 @@ instance.interceptors.request.use(
       const body = conf?.data ?? {};
       const bodyStr = canonicalStringify(body);
       const payload = `${method}:${fullPath}:${timestamp}:${reference}:${bodyStr}`;
-      const signature = await generateSignature(payload, SECRET_KEY);
+      const signature = await generateSignature(payload, SECRET_KEY());
 
       if (token.trim().length > 0) {
         conf.headers.authorization = token.startsWith("Bearer ") ? token : `Bearer ${token.trim()}`;
@@ -63,7 +64,7 @@ instance.interceptors.request.use(
       const { headers, baseURL, data: body = {} } = conf as AxiosRequestConfig;
       const mergePath = fullPath.startsWith("http")
         ? fullPath
-        : `${baseURL?.endsWith(BASE_ENDPOINT) ? baseURL.replace(BASE_ENDPOINT, "") : baseURL}${fullPath}`;
+        : `${baseURL?.endsWith(BASE_ENDPOINT()) ? baseURL.replace(BASE_ENDPOINT(), "") : baseURL}${fullPath}`;
       const headersToParse: Record<string, unknown> = { ...headers };
       const bodyToParse: Record<string, unknown> = { ...body };
 
@@ -241,20 +242,30 @@ instance.interceptors.response.use(
 
     // Toast Conf
     if (conf._toast) {
-      if (httpStatus === 401) _Dismiss(conf._toastId);
-      if (conf._toastId !== undefined) {
-        if (isCanceled) _Dismiss(conf._toastId);
-        _Up(conf._toastId, {
-          render: data.message,
-          type: "error",
-          isLoading: false,
-        });
-      } else {
+      if (httpStatus === 401) {
         _Dismiss(conf._toastId);
-        _Err(data.message, { isLoading: false });
+      } else {
+        if (conf._toastId !== undefined) {
+          if (isCanceled) {
+            _Dismiss(conf._toastId);
+          }
+          _Up(conf._toastId, {
+            render: data.message,
+            type: "error",
+            isLoading: false,
+          });
+        } else {
+          _Dismiss(conf._toastId);
+          if (!isCanceled) {
+            _Err(data.message, { isLoading: false });
+          }
+        }
       }
     }
 
+    // FIX: pengecekan endpoint "/logout" sebelumnya duplikat (satu di sini, satu lagi
+    // di dalam blok 401). Blok kedua tidak pernah tercapai karena blok ini sudah
+    // return duluan untuk semua request ke endpoint "/logout". Cukup satu kali di sini.
     if (typeof conf.url === "string" && conf.url.endsWith("/logout")) {
       return Promise.resolve<ResponseSchemaKey<undefined>>({
         status: true,
@@ -263,20 +274,15 @@ instance.interceptors.response.use(
       });
     }
 
-    if (httpStatus === 401 && ["02", "03"].includes(data.responseCode as ResponseCodeKey)) {
-      if (typeof conf.url === "string" && conf.url.endsWith("/logout")) {
-        return Promise.resolve<ResponseSchemaKey<undefined>>({
-          status: true,
-          responseCode: "00",
-          message: "Logged Out",
-        });
-      }
-
-      if (typeof conf.url === "string" && !conf.url.endsWith("/login")) {
-        await logout({ callApi: true });
-        window.location.href = "/login";
-        return Promise.resolve();
-      }
+    if (
+      httpStatus === 401 &&
+      ["02", "03"].includes(data.responseCode as ResponseCodeKey) &&
+      typeof conf.url === "string" &&
+      !conf.url.endsWith("/login")
+    ) {
+      await logout({ callApi: true });
+      window.location.href = "/login";
+      return Promise.resolve();
     }
 
     return Promise.reject<ResponseSchemaKey<undefined>>(data);

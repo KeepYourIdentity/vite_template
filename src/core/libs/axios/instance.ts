@@ -1,26 +1,23 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
+import { useEnvStore } from "core/store";
 import { generatorRandomString } from "core/utils";
-import { useEnvStore } from "~/core/store";
 import { handleRetryCondition } from "./config";
 
 import type { AxiosInstance } from "axios";
 
-const newEnv = useEnvStore.getState().env;
-const BASE_ENDPOINT = newEnv.SERVER_BASE_PATH;
-const SECRET_KEY = newEnv.SERVER_PUBLIC_KEY;
-const NEED_HEADER = newEnv.SERVER_NEED_HEADER_WHILE_REQUEST;
-const needLog = () => newEnv.ENV === "Development" && newEnv.SERVER_LOGGING;
+const getEnv = () => useEnvStore.getState().env;
 
 const getToastId = (): string => `axios-${generatorRandomString(10)}`;
-const getBaseURL = (): string =>
-  newEnv.SERVER_URL.startsWith("http://") || newEnv.SERVER_URL.startsWith("https://")
-    ? newEnv.SERVER_URL
-    : `http://${newEnv.SERVER_URL}`;
+const getBaseURL = (): string => {
+  const SERVER_URL = getEnv().SERVER_URL;
+  return SERVER_URL.startsWith("http://") || SERVER_URL.startsWith("https://") ? SERVER_URL : `http://${SERVER_URL}`;
+};
+const needLog = () => getEnv().ENV === "Development" && getEnv().SERVER_LOGGING;
 
 const instance: AxiosInstance = axios.create({
   baseURL: getBaseURL(),
-  timeout: newEnv.SERVER_TIMEOUT,
+  timeout: getEnv().SERVER_TIMEOUT,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -32,11 +29,13 @@ const instance: AxiosInstance = axios.create({
 });
 
 axiosRetry(instance, {
-  retries: newEnv.SERVER_RETRY_COUNT,
+  retries: getEnv().SERVER_RETRY_COUNT,
   shouldResetTimeout: true,
   retryCondition: (err) => handleRetryCondition(err, axiosRetry),
   retryDelay: () => axiosRetry.exponentialDelay(),
 });
 
-export { BASE_ENDPOINT, getToastId, instance, NEED_HEADER, needLog, SECRET_KEY };
-
+export { getEnv, getToastId, instance, needLog };
+export const BASE_ENDPOINT = () => getEnv().SERVER_BASE_PATH;
+export const SECRET_KEY = () => getEnv().SERVER_PUBLIC_KEY;
+export const NEED_HEADER = () => getEnv().SERVER_NEED_HEADER_WHILE_REQUEST;

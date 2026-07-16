@@ -29,6 +29,31 @@ const rawBodyRedactedList = [
   "passwordConfirmation",
   "password_confirmation",
 ] as const;
+
+/**
+ * Daftar response code bisnis, berdasarkan dokumentasi berikut:
+ *
+ * === GENERAL ===
+ * 00 | Success
+ * 01 | Invalid Request
+ * 02 | Unauthorized
+ * 03 | Forbidden
+ * 04 | Data Not Found
+ * DT | Duplicate Data
+ *
+ * === SYSTEM ERROR ===
+ * 50 | Internal Server Error
+ * 51 | Service Maintenance
+ * 52 | Service Unavailable
+ * 53 | Internal Server Missconfigure
+ * 99 | Undefined Error
+ *
+ * === EXTERNAL SERVICE ERROR ===
+ * X50 | External Service Error
+ * X51 | External Service Maintenance
+ * X52 | External Service Unavailable
+ * X53 | External Service Invalid Response
+ */
 const rawResponseCodeList = [
   "EXIT",
   "00",
@@ -48,17 +73,31 @@ const rawResponseCodeList = [
   "X53",
 ] as const;
 
+/**
+ * Kode yang layak di-retry: hanya kondisi *transient* dimana request yang sama
+ * berpeluang berhasil kalau dicoba ulang setelah jeda (server maintenance / overload).
+ *
+ * Sengaja TIDAK termasuk:
+ * - 00/01/02/03/04/DT  -> hasil bisnis pasti, retry tidak akan mengubah apa pun
+ * - 50/99               -> biasanya indikasi bug, retry percuma (fail-fast)
+ * - 53/X53              -> misconfigure / invalid response, tidak akan berubah walau di-retry
+ * - X50                 -> error dari layanan eksternal yang sifatnya final, bukan transient
+ */
+const rawRetryableResponseCodeList = ["51", "52", "X51", "X52"] as const;
+
 export const SessionStorageSchema = z.enum(rawSessionStorageList);
 export const LocalStorageSchema = z.enum(rawLocalStorageList);
 export const HeaderRedactedSchema = z.enum(rawHeaderRedactedList);
 export const BodyRedactedSchema = z.enum(rawBodyRedactedList);
-export const ResponseCodeShema = z.enum(rawResponseCodeList);
+export const ResponseCodeSchema = z.enum(rawResponseCodeList);
+export const RetryableResponseCodeSchema = z.enum(rawRetryableResponseCodeList);
 
 export type SessionStorageKey = z.infer<typeof SessionStorageSchema>;
 export type LocalStorageKey = z.infer<typeof LocalStorageSchema>;
 export type HeaderRedactedKey = z.infer<typeof HeaderRedactedSchema>;
 export type BodyRedactedKey = z.infer<typeof BodyRedactedSchema>;
-export type ResponseCodeKey = z.infer<typeof ResponseCodeShema>;
+export type ResponseCodeKey = z.infer<typeof ResponseCodeSchema>;
+export type RetryableResponseCodeKey = z.infer<typeof RetryableResponseCodeSchema>;
 
 export interface RequestRedactedLogsKey {
   headers: HeaderRedactedKey[];
@@ -80,6 +119,8 @@ export const localStorageList: DeepReadonly<LocalStorageKey[]> = DeepFreeze(rawL
 export const headerRedactedList: DeepReadonly<HeaderRedactedKey[]> = DeepFreeze(rawHeaderRedactedList);
 export const bodyRedactedList: DeepReadonly<BodyRedactedKey[]> = DeepFreeze(rawBodyRedactedList);
 export const responseCodeList: DeepReadonly<ResponseCodeKey[]> = DeepFreeze(rawResponseCodeList);
+export const retryableResponseCodeList: DeepReadonly<RetryableResponseCodeKey[]> =
+  DeepFreeze(rawRetryableResponseCodeList);
 export const requestRedactedLogs: DeepReadonly<RequestRedactedLogsKey> = DeepFreeze({
   headers: headerRedactedList,
   data: bodyRedactedList,
@@ -100,20 +141,30 @@ export const handleRetryCondition = (err: AxiosError, module: AxiosRetry): boole
         return false;
       }
 
-      const reqOrigin = new URL(config?.url ?? "").origin;
-      // if (reqOrigin !== window.location.origin) throw new Error();
-      // return true;
+      // config.url bisa berupa path relatif ("/users/123"); new URL() akan throw
+      // kalau tidak di-resolve dulu ke baseURL, sehingga retry ERR_NETWORK tidak
+      // pernah jalan untuk request relatif.
+      const rawUrl = config?.url ?? "";
+      const resolvedUrl = rawUrl.startsWith("http") ? rawUrl : `${config?.baseURL ?? window.location.origin}${rawUrl}`;
+      const reqOrigin = new URL(resolvedUrl).origin;
       return reqOrigin === window.location.origin;
     } catch {
       return false;
     }
   }
+
   if (!err.response) return module.isNetworkError(err);
 
   const response = err.response.data as ResponseSchemaKey<unknown>;
+  const responseCode = response.responseCode;
 
-  const responseCode: ResponseCodeKey = response.responseCode ?? "50";
-  if (responseCode !== "00" || code === "ECONNABORTED") return false;
+  if (code === "ECONNABORTED") return false;
+  if (!responseCode) return module.isNetworkError(err);
+
+  // Hanya lanjut retry kalau responseCode termasuk kondisi transient yang sudah
+  // ditentukan (server maintenance / unavailable). Selain itu, fail-fast.
+  if (!retryableResponseCodeList.includes(responseCode as RetryableResponseCodeKey)) return false;
+
   return module.isNetworkError(err);
 };
 

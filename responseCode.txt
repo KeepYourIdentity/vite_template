@@ -1,0 +1,22 @@
+=== GENERAL ===
+00 | Success
+01 | Invalid Request
+02 | Unauthorized
+03 | Forbidden
+04 | Data Not Found
+DT | Duplicate Data
+
+=== SYSTEM ERROR ===
+50 | Internal Server Error
+51 | Service Maintenance
+52 | Service Unavailable
+53 | Internal Server Missconfigure
+99 | Undefined Error
+
+=== EXTERNAL SERVICE ERROR ===
+X50 | External Service Error
+X51 | External Service Maintenance
+X52 | External Service Unavailable
+X53 | External Service Invalid Response
+
+=== RESERVED (Custom Berdasarkan Client) ===
