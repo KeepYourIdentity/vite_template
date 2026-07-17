@@ -1,5 +1,5 @@
 import { useRouteError } from "react-router-dom";
-import ErrorUI from "./ErrorUI";
+import ErrorUI from "./ErrorUI.backup2";
 
 export default function PageErrorBoundary() {
   const error = useRouteError();

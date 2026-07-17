@@ -1,5 +1,7 @@
-import { TriangleAlert } from "lucide-react";
-import { useMemo } from "react";
+import { useDarkTheme } from "core/store";
+import { saveAs } from "file-saver";
+import { ArrowLeft, DownloadCloud, LogIn, RefreshCcw, TriangleAlert } from "lucide-react";
+import { useCallback, useMemo } from "react";
 
 import type { ReactElement, ReactNode } from "react";
 
@@ -7,9 +9,15 @@ interface ErrorUIProps {
   title?: ReactNode;
   message: ReactNode;
   rawError?: unknown;
+  Reloadable?: boolean;
+  CanBack?: boolean;
+  CanBackToLogin?: boolean;
+  BackToLoginAction?: () => void;
+  CanDownloadError?: boolean;
+  CanSendErrorAutomatically?: boolean;
+  // SendErrorAutomaticallyAction?: () => void;
 }
 
-// Fungsi helper untuk menghasilkan format YYYYMMDD-HHmm
 const getFormattedLogName = (): string => {
   const d = new Date();
   const year = d.getFullYear();
@@ -21,11 +29,28 @@ const getFormattedLogName = (): string => {
   return `Error_${year}${month}${date}-${hours}${mins}.log`;
 };
 
+const actionButtonBase =
+  "inline-flex items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-medium transition-colors not-disabled:cursor-pointer";
+
 export default function ErrorUI({
   title = "Terjadi Kesalahan",
   message,
   rawError,
+  Reloadable = false,
+  CanBack = false,
+  CanBackToLogin = false,
+  BackToLoginAction,
+  CanDownloadError = false,
+  CanSendErrorAutomatically = false,
+  // SendErrorAutomaticallyAction,
 }: ErrorUIProps): ReactElement {
+  const isDarkTheme = useDarkTheme((state) => state.isDarkTheme);
+
+  const noNeedAction = [Reloadable, CanBack, CanBackToLogin, CanDownloadError, CanSendErrorAutomatically].reduce(
+    (accumulation, current) => accumulation && !current,
+    true
+  );
+
   const parsedError = useMemo<string>(() => {
     if (!rawError) return "Detail error tidak diketahui";
     if (rawError instanceof Error) return rawError.stack || rawError.message;
@@ -37,21 +62,57 @@ export default function ErrorUI({
     }
   }, [rawError]);
 
-  // Menggunakan useMemo agar nama file log konstan per sesi error (tidak berubah setiap detik/menit saat render ulang)
   const logFileName = useMemo(() => getFormattedLogName(), []);
 
+  const handleRefresh = useCallback(() => {
+    window.location.reload();
+  }, []);
+
+  const handleGoBack = useCallback(() => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = "/";
+    }
+  }, []);
+
+  const handleGoToLogin = useCallback(() => {
+    BackToLoginAction?.();
+    window.location.href = "/login";
+  }, [BackToLoginAction]);
+
+  const handleDownloadLog = useCallback(() => {
+    const header = [
+      `Log File     : ${logFileName}`,
+      `Generated At : ${new Date().toISOString()}`,
+      `User Agent   : ${window.navigator.userAgent}`,
+      `URL          : ${window.location.href}`,
+      "-".repeat(60),
+      "",
+    ].join("\n");
+
+    const blob = new Blob([header, parsedError], { type: "text/plain;charset=utf-8" });
+    saveAs(blob, logFileName);
+  }, [logFileName, parsedError]);
+
   return (
-    <div className="flex-1 min-h-0 flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 p-4 text-gray-800 dark:text-gray-200">
-      <div className="max-w-2xl w-full bg-white dark:bg-gray-950 rounded-lg shadow-md p-6 sm:p-8 border-t-4 border-red-500">
+    <div
+      className={`flex-1 min-h-0 xy-center flex-col p-4 ${isDarkTheme ? "bg-gray-900 text-gray-200" : "bg-gray-50 text-gray-800"}`}
+    >
+      <div
+        className={`max-w-2xl w-full rounded-lg shadow-md p-6 sm:p-8 border-t-4 border-red-500 ${isDarkTheme ? "bg-gray-950" : "bg-white"}`}
+      >
         <h1 className="text-2xl sm:text-3xl font-bold text-red-500 mb-2 flex items-center gap-3">
           <TriangleAlert className="size-8" /> <span>{title}</span>
         </h1>
 
-        <p className="text-gray-600 dark:text-gray-400 mb-6">{message}</p>
+        <p className={`mb-6 ${isDarkTheme ? "text-gray-400" : "text-gray-600"}`}>{message}</p>
 
         {import.meta.env.DEV && parsedError && (
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-md p-4">
-            <strong className="block text-sm text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
+          <div className={`rounded-md p-4 mb-6 ${isDarkTheme ? "bg-gray-800" : "bg-gray-100"}`}>
+            <strong
+              className={`block text-sm mb-2 uppercase tracking-wide ${isDarkTheme ? "text-gray-300" : "text-gray-700"}`}
+            >
               Detail Error (DEV Only):
             </strong>
             <div className="overflow-auto">
@@ -59,22 +120,71 @@ export default function ErrorUI({
             </div>
           </div>
         )}
-        {import.meta.env.PROD && ( //TODO: buat jadi lebih friendly di orang biasa
-          <div className="bg-gray-100 dark:bg-gray-800 rounded-md p-4">
-            <strong className="block text-sm text-gray-700 dark:text-gray-300 mb-2 uppercase tracking-wide">
+
+        {import.meta.env.PROD && (
+          <div className={`rounded-md p-4 mb-6 ${isDarkTheme ? "bg-gray-800" : "bg-gray-100"}`}>
+            <strong
+              className={`block text-sm mb-2 uppercase tracking-wide ${isDarkTheme ? "text-gray-300" : "text-gray-700"}`}
+            >
               Kami akan sangat menghargai jika anda berkenan untuk mengirimkan file{" "}
               <span className="rounded p-1 bg-red-300 text-red-500 normal-case font-mono">{logFileName}</span> kepada
               kami para pengembang website ini
             </strong>
           </div>
         )}
+
+        {!noNeedAction && (
+          <div className="flex flex-wrap gap-3">
+            {Reloadable && (
+              <button type="button" onClick={handleRefresh} className={`${actionButtonBase} bg-primary`}>
+                <RefreshCcw className="size-4" />
+                Muat Ulang Halaman
+              </button>
+            )}
+
+            {CanBack && (
+              <button
+                type="button"
+                onClick={handleGoBack}
+                className={`${actionButtonBase} ${
+                  isDarkTheme
+                    ? "bg-gray-800 text-gray-200 hover:bg-gray-700"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
+              >
+                <ArrowLeft className="size-4" />
+                Kembali
+              </button>
+            )}
+
+            {CanBackToLogin && (
+              <button
+                type="button"
+                onClick={handleGoToLogin}
+                className={`${actionButtonBase} ${
+                  isDarkTheme
+                    ? "bg-gray-800 text-gray-200 hover:bg-gray-700"
+                    : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                }`}
+              >
+                <LogIn className="size-4" />
+                Ke Halaman Login
+              </button>
+            )}
+
+            {CanDownloadError && (
+              <button
+                type="button"
+                onClick={handleDownloadLog}
+                className={`${actionButtonBase} bg-red-500 text-white hover:bg-red-600`}
+              >
+                <DownloadCloud className="size-4" />
+                Unduh Log Error
+              </button>
+            )}
+          </div>
+        )}
       </div>
-      {/* <footer className="w-full h-auto py-1 px-2 flex flex-row justify-center gap-2">
-        <p className="text-slate-990 font-bold uppercase text-center w-fit rounded">
-          Copyright &copy; {new Date().getFullYear()} PT. Inti Sistem Sarana Sejahtera.
-        </p>
-        <p className="text-slate-990 font-bold text-center w-fit rounded">All rights reserved.</p>
-      </footer> */}
     </div>
   );
 }

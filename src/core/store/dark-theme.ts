@@ -9,9 +9,18 @@ export interface DarkThemeState {
 
 export const useDarkTheme = create<DarkThemeState>((set) => ({
   isDarkTheme: false,
+
   toggleDarkTheme(val) {
-    set((state) => ({ isDarkTheme: typeof val === "boolean" ? val : !state.isDarkTheme }));
+    set((state) => {
+      const darkThemeFlag = typeof val === "boolean" ? val : !state.isDarkTheme;
+
+      local.remove("localDarkTheme");
+      local.set<boolean>({ storage: "localDarkTheme", data: darkThemeFlag });
+
+      return { isDarkTheme: darkThemeFlag };
+    });
   },
+
   initial() {
     const darkThemeFlag = local.get<boolean>("localDarkTheme") || false;
     set({ isDarkTheme: darkThemeFlag });

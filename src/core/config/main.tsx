@@ -1,7 +1,7 @@
-import ErrorUI from "core/assets/static/ErrorUI";
-import GlobalErrorBoundary from "core/assets/static/GlobalErrorBoundary";
-import "core/assets/style/index.css";
-import { useEnvStore } from "core/store";
+// import ErrorUI from "core/assets/static/ErrorUI";
+// import GlobalErrorBoundary from "core/assets/static/GlobalErrorBoundary";
+import { ErrorUI, GlobalErrorBoundary } from "core/assets/static";
+import { useDarkTheme, useEnvStore } from "core/store";
 import App from "features/main/App";
 import { AlertTriangle, CheckCircle2, CircleAlert, Info } from "lucide-react";
 import { StrictMode } from "react";
@@ -34,6 +34,8 @@ const customToastIcon = (props: IconProps): ReactElement | true => {
   return iconGroup[props.type];
 };
 
+useDarkTheme.getState().initial();
+
 if (!appEnv) {
   createRoot(root).render(
     <div className={rootClassName}>
@@ -41,6 +43,7 @@ if (!appEnv) {
         title={"Sistem Gagal Dimuat"}
         message="Aplikasi tidak dapat berjalan karena ada kesalahan pada konfigurasi environment."
         rawError={treeifyError(envError as ZodError)}
+        CanDownloadError
       />
     </div>
   );

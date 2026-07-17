@@ -1,30 +1,12 @@
-import { DeepFreeze } from "core/utils";
+export * from "./config";
+
+export type * from "./config";
+
 import { toast } from "react-toastify";
+import { mergeOptions, notify } from "./";
 
-import type { Id, ToastOptions, UpdateOptions } from "react-toastify";
-
-interface ToastPromiseMessages {
-  pending?: string;
-  success?: string;
-  error?: string;
-}
-
-type ToastType = "success" | "error" | "warn" | "info" | "loading";
-type ToastContainer = (msg: string, opt?: ToastOptions) => Id;
-
-const DEFAULT_TOAST_CONFIG = DeepFreeze<ToastOptions>({
-  position: "top-right",
-  autoClose: 3000,
-  hideProgressBar: false,
-  closeOnClick: true,
-  pauseOnHover: true,
-  draggable: true,
-  theme: "colored",
-});
-
-const mergeOptions = <T = ToastOptions>(opt?: T): T =>
-  opt ? ({ ...DEFAULT_TOAST_CONFIG, ...opt } as T) : ({ ...DEFAULT_TOAST_CONFIG } as T);
-const notify = (type: ToastType, msg: string, opt?: ToastOptions): Id => toast[type](msg, mergeOptions(opt));
+import type { Id, ToastOptions, ToastPromiseParams, UpdateOptions } from "react-toastify";
+import type { ToastContainer } from "./";
 
 export const _Pass: ToastContainer = (msg, opt) => notify("success", msg, opt);
 export const _Err: ToastContainer = (msg, opt) => notify("error", msg, opt);
@@ -37,18 +19,18 @@ export const _Up = (id: Id, opt?: UpdateOptions): void => {
 export const _Dismiss = (id?: Id): void => {
   toast.dismiss(id);
 };
-export const _Active = (id: Id): boolean => toast.isActive(id);
-export const _Promise = <T>(
+export const _Active = (id: Id, containerId?: Id): boolean => toast.isActive(id, containerId);
+export const _Promise = <T = unknown, E = unknown, P = unknown>(
   promise: Promise<T> | (() => Promise<T>),
-  msg: ToastPromiseMessages,
-  opt?: ToastOptions
+  msg: ToastPromiseParams<T, E, P>,
+  opt?: ToastOptions<T>
 ): Promise<T> =>
-  toast.promise(
+  toast.promise<T, E, P>(
     promise,
     {
-      pending: msg.pending || "Loading...",
-      success: msg.success || "Done!",
-      error: msg.error || "Error!",
+      pending: msg.pending || "Please Wait...",
+      success: msg.success || "Resolved!",
+      error: msg.error || "Rejected!",
     },
     mergeOptions(opt)
-  ) as Promise<T>;
+  );
