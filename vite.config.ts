@@ -73,11 +73,13 @@ export default defineConfig(({ mode }: { mode: string }) => {
     },
     resolve: {
       alias: {
-        "~": path.resolve(__dirname, "./src"),
         core: path.resolve(__dirname, "./src/core"),
         features: path.resolve(__dirname, "./src/features"),
+        main: path.resolve(__dirname, "./src/features/main"),
         mocks: path.resolve(__dirname, "./src/features/mocks"),
+        routes: path.resolve(__dirname, "./src/features/routes"),
         ui: path.resolve(__dirname, "./src/features/ui"),
+        utils: path.resolve(__dirname, "./src/features/utils"),
       },
     },
   };

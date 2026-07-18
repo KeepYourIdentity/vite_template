@@ -1,10 +1,7 @@
-// export * from "./axios-utility";
 export * from "./cryptor";
 export * from "./deep-freeze";
 export * from "./deep-thawed";
 export * from "./get-days-diff";
-export * from "./get-first-path";
-// export * from "./logout-utility";
 export * from "./react-utility";
 export * from "./storage-helper";
 export * from "./string-utility";

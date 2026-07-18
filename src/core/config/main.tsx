@@ -1,9 +1,7 @@
-// import ErrorUI from "core/assets/static/ErrorUI";
-// import GlobalErrorBoundary from "core/assets/static/GlobalErrorBoundary";
 import { ErrorUI, GlobalErrorBoundary } from "core/assets/static";
 import { useDarkTheme, useEnvStore } from "core/store";
-import App from "features/main/App";
 import { AlertTriangle, CheckCircle2, CircleAlert, Info } from "lucide-react";
+import App from "main/App";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ToastContainer } from "react-toastify";
