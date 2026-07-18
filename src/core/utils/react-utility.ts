@@ -11,15 +11,30 @@ import type { ComponentType, LazyExoticComponent } from "react";
  * @KeepYourIdentity - Creator
  * @version 1.1
  */
-export const LazyImport = <C, T extends Record<string, ComponentType<C>>>(
+export const LazyImport = <C, T extends Record<string, ComponentType<C>>, K extends keyof T>(
   factory: () => Promise<T>,
-  name: keyof T
-): LazyExoticComponent<T[keyof T]> => {
+  name: K
+): LazyExoticComponent<T[K]> => {
   return lazy(() =>
     factory().then((module) => ({
       default: module[name],
     }))
   );
+};
+
+/**
+ * Utilitas import dinamis khusus untuk React Router v6.4+ (Data Router)
+ */
+export const RouteLazyImport = <C, T extends Record<string, ComponentType<C>>, K extends keyof T>(
+  factory: () => Promise<T>,
+  name: K
+) => {
+  // Mengembalikan async function yang disyaratkan oleh prop 'lazy' di react-router
+  return async () => {
+    const module = await factory();
+    // React router membutuhkan kembalian berupa object dengan properti 'Component'
+    return { Component: module[name] };
+  };
 };
 
 /**
