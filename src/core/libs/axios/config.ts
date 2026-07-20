@@ -1,5 +1,3 @@
-// NOTE: Merapihkan Types dan data yang masih bercampur jika diperlukan
-
 import { useInternet } from "core/store";
 import { DeepFreeze } from "core/utils";
 import { z } from "zod";

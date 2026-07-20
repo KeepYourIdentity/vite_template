@@ -1,11 +1,24 @@
 type ParamState = Date | string | number;
 type Condition = "NUMBER" | "VERBOSE";
-type MsgDaysDiffResult = "invalid-date" | "negative-diff" | "same-day" | "one-day" | "within-a-week" | "within-a-month" | "within-a-year" | "more-than-a-year" | "number";
+type MsgDaysDiffResult =
+  | "invalid-date"
+  | "negative-diff"
+  | "same-day"
+  | "one-day"
+  | "within-a-week"
+  | "within-a-month"
+  | "within-a-year"
+  | "more-than-a-year"
+  | "number";
 type DaysDiffResult = [number, MsgDaysDiffResult];
 
 const DAY_MS = 864e5;
 
-export const getDaysDiff = (start: ParamState, end: ParamState = new Date(), condition: Condition = "NUMBER"): DaysDiffResult => {
+export const getDaysDiff = (
+  start: ParamState,
+  end: ParamState = new Date(),
+  condition: Condition = "NUMBER"
+): DaysDiffResult => {
   const startTime = new Date(start).getTime();
   const endTime = new Date(end).getTime();
 
@@ -23,5 +36,5 @@ export const getDaysDiff = (start: ParamState, end: ParamState = new Date(), con
   if (diff > 7 && diff <= 30) return [Math.trunc(diff / 7), "within-a-month"];
   if (diff > 30 && diff <= 365) return [Math.trunc(diff / 30), "within-a-year"];
 
-  return [Math.trunc(diff / 365), "more-than-a-year"]
+  return [Math.trunc(diff / 365), "more-than-a-year"];
 };

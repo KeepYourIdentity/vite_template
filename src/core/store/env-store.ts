@@ -27,7 +27,7 @@ export const useEnvStore = create<EnvStoreState>((set) => ({
     set((state) => {
       // Buat pengaman jika sudah diload pertama kali
       if (state.isLoaded) return { env: state.env };
-      
+
       return { env: data, isLoaded: true };
     });
   },

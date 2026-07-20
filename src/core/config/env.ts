@@ -62,7 +62,6 @@ const source = {
 
 const { success, data, error } = schema.safeParse(source);
 
-
 export type envSchema = z.infer<typeof schema>;
 export const env = DeepFreeze<envSchema | null>(
   success
@@ -77,7 +76,7 @@ export const env = DeepFreeze<envSchema | null>(
         SERVER_LOGGING: data.SERVER_LOGGING as boolean,
         SERVER_TIMEOUT: data.SERVER_TIMEOUT as number,
         SERVER_RETRY_COUNT: data.SERVER_RETRY_COUNT as number,
-        SERVER_NEED_HEADER_WHILE_REQUEST: data.SERVER_NEED_HEADER_WHILE_REQUEST as boolean
+        SERVER_NEED_HEADER_WHILE_REQUEST: data.SERVER_NEED_HEADER_WHILE_REQUEST as boolean,
       }
     : null
 );

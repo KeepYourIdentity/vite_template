@@ -69,7 +69,7 @@ export function exportToExcel<T extends Record<string, unknown>>(
         _Err("Tidak ada sheet dengan data valid!", {
           autoClose: config.autoClose,
         });
-        
+
         return false;
       }
     } else {

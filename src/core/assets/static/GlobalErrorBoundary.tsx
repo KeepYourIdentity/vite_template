@@ -1,5 +1,5 @@
 import { Component } from "react";
-import ErrorUI from "./ErrorUI.backup2";
+import ErrorUI from "./ErrorUI";
 
 import type { ErrorInfo, ReactNode } from "react";
 

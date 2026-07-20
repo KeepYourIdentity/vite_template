@@ -7,4 +7,3 @@ export type * from "./dark-theme";
 export type * from "./env-store";
 export type * from "./internet";
 export type * from "./sidebar-controll";
-

@@ -30,7 +30,7 @@ const baseRequest = async <TResponse, TBody = unknown>(
   toastConfig: ToastOptions | UpdateOptions,
   method: HttpMethod
 ): Promise<ResponseSchemaKey<TResponse>> => {
-  const hasToast = toastId !== false && !((config as CustomAxiosRequestConfig)._toast);
+  const hasToast = toastId !== false && !(config as CustomAxiosRequestConfig)._toast;
 
   try {
     let res: ResponseSchemaKey<TResponse> | undefined;
@@ -60,22 +60,22 @@ const baseRequest = async <TResponse, TBody = unknown>(
     const isCanceled = err?.responseCode === "00" && err?.message === "Permintaan dibatalkan oleh pengguna";
 
     if (hasToast) {
-          if (isCanceled) {
-            // Selaras dengan perilaku interceptor: request yang di-cancel user tidak
-            // perlu toast error, cukup hilangkan toast pending-nya secara diam-diam.
-            _Dismiss(toastId as Id);
-          } else {
-            _Up(toastId, {
-              type: "error",
-              render: err?.message ?? "Gagal mendapatkan data",
-              isLoading: false,
-              autoClose: 3000,
-              ...toastConfig,
-            });
-          }
-        }
-    
-        return Promise.reject(err);
+      if (isCanceled) {
+        // Selaras dengan perilaku interceptor: request yang di-cancel user tidak
+        // perlu toast error, cukup hilangkan toast pending-nya secara diam-diam.
+        _Dismiss(toastId as Id);
+      } else {
+        _Up(toastId, {
+          type: "error",
+          render: err?.message ?? "Gagal mendapatkan data",
+          isLoading: false,
+          autoClose: 3000,
+          ...toastConfig,
+        });
+      }
+    }
+
+    return Promise.reject(err);
   }
 };
 
@@ -128,4 +128,3 @@ export function _delete<TResponse, TBody = unknown>(
 ) {
   return baseRequest<TResponse, TBody>(url, config1 as TBody, config2, toastId, toastConfig, "delete");
 }
-

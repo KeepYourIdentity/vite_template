@@ -8,11 +8,13 @@ const createStorageHelper = (store: Storage) => {
   const listeners = new Set<(key: string, value: unknown) => void>();
 
   // Menggunakan event 'storage' dari browser
-  if (typeof window !== 'undefined') {
-    window.addEventListener('storage', (event) => {
+  if (typeof window !== "undefined") {
+    window.addEventListener("storage", (event) => {
       if (event.storageArea === store && event.key) {
         const val = event.newValue ? JSON.parse(event.newValue) : null;
-        listeners.forEach((callback) => { callback(event.key as string, val); });
+        listeners.forEach((callback) => {
+          callback(event.key as string, val);
+        });
       }
     });
   }
@@ -52,7 +54,7 @@ const createStorageHelper = (store: Storage) => {
     subscribe(callback: (key: string, value: unknown) => void) {
       listeners.add(callback);
       return () => listeners.delete(callback); // Return unsubscribe function
-    }
+    },
   };
 };
 
