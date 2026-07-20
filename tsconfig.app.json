@@ -37,7 +37,7 @@
       "mocks/*": ["./src/features/mocks/*"],
       "routes/*": ["./src/features/routes/*"],
       "ui/*": ["./src/features/ui/*"],
-      "utils/*": ["./src/features/utils/*"],
+      "utils/*": ["./src/features/utils/*"]
     }
   },
   "include": ["src"],
