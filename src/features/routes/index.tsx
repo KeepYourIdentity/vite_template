@@ -8,23 +8,21 @@ export default function AppRouter() {
   const lastPath = session.get<string>("sessionURL") ?? "/";
   return (
     <RouterProvider
-      router={createBrowserRouter(
-        [
-          {
-            errorElement: <PageErrorBoundary />,
-            children: [
-              {
-                path: "/login",
-                lazy: UnderConstruction,
-              },
-            ],
-          },
-          {
-            path: "*",
-            element: <Navigate to={lastPath || "/login"} replace />,
-          },
-        ],
-      )}
+      router={createBrowserRouter([
+        {
+          errorElement: <PageErrorBoundary />,
+          children: [
+            {
+              path: "/login",
+              lazy: UnderConstruction,
+            },
+          ],
+        },
+        {
+          path: "*",
+          element: <Navigate to={lastPath || "/login"} replace />,
+        },
+      ])}
     />
   );
 }

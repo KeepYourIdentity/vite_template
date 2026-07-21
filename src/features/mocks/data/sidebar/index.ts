@@ -1,12 +1,10 @@
-// biome-ignore assist/source/organizeImports : sort by features
 import { DeepFreeze } from "core/utils";
-
-import { kreditMenu } from "./kredit";
-import { dpkMenu } from "./dpk";
-import { penempatanBankLainMenu } from "./penempatan-bank-lain";
-import { proyeksiLabaMenu } from "./proyeksi-laba";
 import { aspekKeuanganLainMenu } from "./aspek-keuangan-lain";
 import { aspekPermodalanMenu } from "./aspek-permodalan";
+import { dpkMenu } from "./dpk";
+import { kreditMenu } from "./kredit";
+import { penempatanBankLainMenu } from "./penempatan-bank-lain";
+import { proyeksiLabaMenu } from "./proyeksi-laba";
 
 import type { DashboardMenuState } from "mocks/types";
 

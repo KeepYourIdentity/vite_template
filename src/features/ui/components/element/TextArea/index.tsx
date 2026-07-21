@@ -1,6 +1,6 @@
 import type { TextAreaProps } from "./index.types";
 
-export function TextArea({
+export default function TextArea({
   ref,
   label,
   id,

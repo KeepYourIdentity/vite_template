@@ -2,7 +2,7 @@ import { useInternet } from "core/store";
 import { DeepFreeze } from "core/utils";
 import { z } from "zod";
 
-import type { AxiosError, InternalAxiosRequestConfig } from "axios";
+import type { AxiosError, AxiosRequestConfig, InternalAxiosRequestConfig } from "axios";
 import type { AxiosRetry } from "axios-retry";
 import type { DeepReadonly } from "core/utils";
 import type { Id } from "react-toastify";
@@ -107,7 +107,11 @@ export interface ResponseSchemaKey<D = unknown> {
   message: string;
   data?: D;
 }
-export interface CustomAxiosRequestConfig<D = unknown> extends InternalAxiosRequestConfig<D> {
+export interface CustomInternalAxiosRequestConfig<D = unknown> extends InternalAxiosRequestConfig<D> {
+  _toast?: boolean;
+  _toastId?: Id;
+}
+export interface CustomAxiosRequestConfig<D = unknown> extends AxiosRequestConfig<D> {
   _toast?: boolean;
   _toastId?: Id;
 }
@@ -126,7 +130,7 @@ export const requestRedactedLogs: DeepReadonly<RequestRedactedLogsKey> = DeepFre
 
 export const handleRetryCondition = (err: AxiosError, module: AxiosRetry): boolean => {
   const code = err.code;
-  const config = err.config as CustomAxiosRequestConfig;
+  const config = err.config as CustomInternalAxiosRequestConfig;
 
   if (code === "ERR_NETWORK" && !window.navigator.onLine) {
     useInternet.getState().setIsLost(true);

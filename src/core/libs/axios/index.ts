@@ -1,7 +1,8 @@
+export type * from "./config";
+
 import { _Dismiss, _Up } from "core/libs/react-toastify";
 import { instance } from "./interceptor";
 
-import type { AxiosRequestConfig } from "axios";
 import type { Id, ToastOptions, UpdateOptions } from "react-toastify";
 import type { CustomAxiosRequestConfig, ResponseSchemaKey } from "./config";
 
@@ -25,12 +26,12 @@ type HttpMethod = BodyMethod | QueryMethod;
 const baseRequest = async <TResponse, TBody = unknown>(
   url: string,
   dataOrConfig: TBody,
-  config: AxiosRequestConfig<TBody>,
+  config: CustomAxiosRequestConfig<TBody>,
   toastId: Id | false,
   toastConfig: ToastOptions | UpdateOptions,
   method: HttpMethod
 ): Promise<ResponseSchemaKey<TResponse>> => {
-  const hasToast = toastId !== false && !(config as CustomAxiosRequestConfig)._toast;
+  const hasToast = toastId !== false && !config._toast;
 
   try {
     let res: ResponseSchemaKey<TResponse> | undefined;
@@ -39,7 +40,7 @@ const baseRequest = async <TResponse, TBody = unknown>(
       res = await (instance[method as BodyMethod](url, dataOrConfig, config) as Promise<ResponseSchemaKey<TResponse>>);
     } else {
       res = await (instance[method as QueryMethod](url, {
-        ...(dataOrConfig as AxiosRequestConfig<TBody>),
+        ...(dataOrConfig as CustomAxiosRequestConfig<TBody>),
         ...config,
       }) as Promise<ResponseSchemaKey<TResponse>>);
     }
@@ -63,7 +64,7 @@ const baseRequest = async <TResponse, TBody = unknown>(
       if (isCanceled) {
         // Selaras dengan perilaku interceptor: request yang di-cancel user tidak
         // perlu toast error, cukup hilangkan toast pending-nya secara diam-diam.
-        _Dismiss(toastId as Id);
+        _Dismiss(toastId);
       } else {
         _Up(toastId, {
           type: "error",
@@ -81,8 +82,8 @@ const baseRequest = async <TResponse, TBody = unknown>(
 
 export function _get<TResponse, TBody = unknown>(
   url: string,
-  config1: AxiosRequestConfig<TBody> = {},
-  config2: AxiosRequestConfig<TBody> = {},
+  config1: CustomAxiosRequestConfig<TBody> = {},
+  config2: CustomAxiosRequestConfig<TBody> = {},
   toastId: Id | false = false,
   toastConfig: ToastOptions | UpdateOptions = {}
 ) {
@@ -92,7 +93,7 @@ export function _get<TResponse, TBody = unknown>(
 export function _post<TResponse, TBody = unknown>(
   url: string,
   config1: TBody = {} as TBody,
-  config2: AxiosRequestConfig<TBody> = {},
+  config2: CustomAxiosRequestConfig<TBody> = {},
   toastId: Id | false = false,
   toastConfig: ToastOptions | UpdateOptions = {}
 ) {
@@ -102,7 +103,7 @@ export function _post<TResponse, TBody = unknown>(
 export function _put<TResponse, TBody = unknown>(
   url: string,
   config1: TBody = {} as TBody,
-  config2: AxiosRequestConfig<TBody> = {},
+  config2: CustomAxiosRequestConfig<TBody> = {},
   toastId: Id | false = false,
   toastConfig: ToastOptions | UpdateOptions = {}
 ) {
@@ -112,7 +113,7 @@ export function _put<TResponse, TBody = unknown>(
 export function _patch<TResponse, TBody = unknown>(
   url: string,
   config1: TBody = {} as TBody,
-  config2: AxiosRequestConfig<TBody> = {},
+  config2: CustomAxiosRequestConfig<TBody> = {},
   toastId: Id | false = false,
   toastConfig: ToastOptions | UpdateOptions = {}
 ) {
@@ -121,8 +122,8 @@ export function _patch<TResponse, TBody = unknown>(
 
 export function _delete<TResponse, TBody = unknown>(
   url: string,
-  config1: AxiosRequestConfig<TBody> = {},
-  config2: AxiosRequestConfig<TBody> = {},
+  config1: CustomAxiosRequestConfig<TBody> = {},
+  config2: CustomAxiosRequestConfig<TBody> = {},
   toastId: Id | false = false,
   toastConfig: ToastOptions | UpdateOptions = {}
 ) {

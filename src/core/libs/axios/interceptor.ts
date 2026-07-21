@@ -8,7 +8,7 @@ import { canonicalStringify, generateSignature, logout } from "./utils";
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import type {
   BodyRedactedKey,
-  CustomAxiosRequestConfig,
+  CustomInternalAxiosRequestConfig,
   HeaderRedactedKey,
   ResponseCodeKey,
   ResponseSchemaKey,
@@ -17,7 +17,7 @@ import type {
 const fallback_msg = "Terdapat kesalahan Sistem, Hubungi Pengembang Untuk Pemeriksaan Lebih Lanjut";
 
 instance.interceptors.request.use(
-  async (conf: CustomAxiosRequestConfig) => {
+  async (conf: CustomInternalAxiosRequestConfig) => {
     const method = conf?.method?.toUpperCase() ?? "GET";
     const params = conf?.params;
     const path = conf?.url ?? "";
@@ -40,7 +40,7 @@ instance.interceptors.request.use(
 
     if (NEED_HEADER()) {
       /** @deprecated support until an unspecified time limit */
-      const token: string = session.get("sessionToken") || local.get("sessionToken") || "";
+      const token: string = session.get("sessionToken") || local.get("localToken") || "";
 
       const timestamp = Date.now().toString();
       const reference = md5(timestamp);
@@ -60,6 +60,7 @@ instance.interceptors.request.use(
 
     if (conf._toast === true) conf._toastId = _Pending("Memuat...", { toastId: getToastId() });
 
+    console.info("Request Intercepted:", JSON.stringify(conf));
     if (needLog()) {
       const { headers, baseURL, data: body = {} } = conf as AxiosRequestConfig;
       const mergePath = fullPath.startsWith("http")
@@ -90,7 +91,13 @@ instance.interceptors.request.use(
   },
 
   (err: AxiosError<ResponseSchemaKey<undefined>>) => {
-    const conf = err.config as CustomAxiosRequestConfig;
+    const conf = err.config as CustomInternalAxiosRequestConfig;
+    const res = {
+      status: err.response?.data || false,
+      responseCode: err.response?.data || "50",
+      message: err.response?.data || fallback_msg,
+    } as ResponseSchemaKey<undefined>;
+
     if (conf._toast) {
       if (conf._toastId !== undefined) {
         _Up(conf._toastId, {
@@ -104,13 +111,14 @@ instance.interceptors.request.use(
       }
     }
 
+    console.error("Request Error:", JSON.stringify(err));
     if (needLog()) {
-      console.group("❌ Error Before Sending");
+      console.group("❌ Got Error Before Sending");
       console.log("no-implemented-yet");
       console.groupEnd();
     }
 
-    return Promise.reject(err);
+    return Promise.reject<ResponseSchemaKey<undefined>>(res);
   }
 );
 
@@ -119,7 +127,7 @@ instance.interceptors.response.use(
   //@ts-ignore
   (res: AxiosResponse<ResponseSchemaKey, ResponseSchemaKey>) => {
     // FIXME: isu missing padahal tidak ada yang penting dari yang missing tadi
-    const conf = res.config as CustomAxiosRequestConfig;
+    const conf = res.config as CustomInternalAxiosRequestConfig;
     const data = res.data as ResponseSchemaKey; // FIXME: isu missing setelah nambah `as ResponseSchemaKey` dibaris yang sama dengan komentar ini
 
     if (conf._toast) {
@@ -136,6 +144,7 @@ instance.interceptors.response.use(
       }
     }
 
+    console.info("Response Intercepted:", JSON.stringify(res));
     if (needLog()) {
       const baseURL = conf.baseURL ?? "";
       const url = conf.url ?? "";
@@ -184,7 +193,7 @@ instance.interceptors.response.use(
   },
 
   async (err: AxiosError<ResponseSchemaKey<undefined>>) => {
-    const conf = err.config as CustomAxiosRequestConfig;
+    const conf = err.config as CustomInternalAxiosRequestConfig;
     const httpStatus = err.response?.status ?? 500;
 
     const isCanceled = ["ERR_CANCELED"].includes(err?.code ?? "") || ["CanceledError"].includes(err.name);
@@ -196,6 +205,7 @@ instance.interceptors.response.use(
       message: isCanceled ? "Permintaan dibatalkan oleh pengguna" : (rawData?.message ?? err.message ?? fallback_msg),
     };
 
+    console.error("Response Error:", JSON.stringify(err));
     if (needLog()) {
       const baseURL = conf.baseURL ?? "";
       const url = conf.url ?? "";

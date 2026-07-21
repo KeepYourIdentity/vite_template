@@ -6,7 +6,7 @@ import Button from "ui/components/element/Button";
 
 import type { ModalProps } from "./index.types";
 
-export function Modal({ isOpen, onClose, title, subtitle, children, maxWidth = "max-w-lg" }: ModalProps) {
+export default function Modal({ isOpen, onClose, title, subtitle, children, maxWidth = "max-w-lg" }: ModalProps) {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();

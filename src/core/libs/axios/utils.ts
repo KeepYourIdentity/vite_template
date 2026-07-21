@@ -87,20 +87,20 @@ export const generateSignature = async (payload: string, secret: string): Promis
   return hexString;
 };
 
-// function sortObjectKeys(obj: unknown): unknown {
-//   if (obj === null || typeof obj !== "object") return obj;
-//   if (Array.isArray(obj)) return obj.map(sortObjectKeys);
+function sortObjectKeys(obj: unknown): unknown {
+  if (obj === null || typeof obj !== "object") return obj;
+  if (Array.isArray(obj)) return obj.map(sortObjectKeys);
 
-//   const objRecord = obj as Record<string, unknown>;
-//   const sortedKeys = Object.keys(objRecord).sort();
+  const objRecord = obj as Record<string, unknown>;
+  const sortedKeys = Object.keys(objRecord).sort();
 
-//   const ordered: Record<string, unknown> = {};
-//   for (const key of sortedKeys) {
-//     ordered[key] = sortObjectKeys(objRecord[key]);
-//   }
+  const ordered: Record<string, unknown> = {};
+  for (const key of sortedKeys) {
+    ordered[key] = sortObjectKeys(objRecord[key]);
+  }
 
-//   return ordered;
-// }
+  return ordered;
+}
 
 /**
  * Mengurutkan kunci (keys) di dalam objek secara alfabetis sebelum mengubahnya menjadi JSON string.
@@ -113,21 +113,4 @@ export const generateSignature = async (payload: string, secret: string): Promis
  * @Anonymous - Creator
  * @version 2.0
  */
-export const canonicalStringify = <T>(obj: T): string => {
-  function sortObjectKeys(obj: unknown): unknown {
-    if (obj === null || typeof obj !== "object") return obj;
-    if (Array.isArray(obj)) return obj.map(sortObjectKeys);
-
-    const objRecord = obj as Record<string, unknown>;
-    const sortedKeys = Object.keys(objRecord).sort();
-
-    const ordered: Record<string, unknown> = {};
-    for (const key of sortedKeys) {
-      ordered[key] = sortObjectKeys(objRecord[key]);
-    }
-
-    return ordered;
-  }
-
-  return JSON.stringify(sortObjectKeys(obj) ?? {});
-};
+export const canonicalStringify = <T>(obj: T): string => JSON.stringify(sortObjectKeys(obj) ?? {});

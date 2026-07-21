@@ -2,7 +2,7 @@ import { Check } from "lucide-react";
 
 import type { CheckBoxProps } from "./index.types";
 
-export function CheckBox({
+export default function CheckBox({
   ref,
   label,
   id,

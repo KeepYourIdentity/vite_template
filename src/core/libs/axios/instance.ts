@@ -7,11 +7,11 @@ import { handleRetryCondition } from "./config";
 import type { AxiosInstance } from "axios";
 
 const getEnv = () => useEnvStore.getState().env;
-
+const BASE_ENDPOINT = () => getEnv().SERVER_BASE_PATH;
 const getToastId = (): string => `axios-${generatorRandomString(10)}`;
 const getBaseURL = (): string => {
   const SERVER_URL = getEnv().SERVER_URL;
-  return SERVER_URL.startsWith("http://") || SERVER_URL.startsWith("https://") ? SERVER_URL : `http://${SERVER_URL}`;
+  return `${SERVER_URL.startsWith("http://") || SERVER_URL.startsWith("https://") ? SERVER_URL : `http://${SERVER_URL}`}${BASE_ENDPOINT()}`;
 };
 const needLog = () => getEnv().ENV === "Development" && getEnv().SERVER_LOGGING;
 
@@ -35,7 +35,6 @@ axiosRetry(instance, {
   retryDelay: () => axiosRetry.exponentialDelay(),
 });
 
-export { getEnv, getToastId, instance, needLog };
-export const BASE_ENDPOINT = () => getEnv().SERVER_BASE_PATH;
+export { BASE_ENDPOINT, getEnv, getToastId, instance, needLog };
 export const SECRET_KEY = () => getEnv().SERVER_PUBLIC_KEY;
 export const NEED_HEADER = () => getEnv().SERVER_NEED_HEADER_WHILE_REQUEST;

@@ -4,7 +4,7 @@ import { default as Select } from "ui/components/element/ReactSelect";
 
 import type { FilterPeriodeProps, PeriodeOption } from "./FilterPeriode.types";
 
-export const FilterPeriode = ({ value, onChange }: FilterPeriodeProps) => {
+export default function FilterPeriode({ value, onChange }: FilterPeriodeProps) {
   const formatPeriode = (val: string) => {
     if (!val) return "";
     return val.length === 6 ? `${val.slice(0, 4)}-${val.slice(4, 6)}` : val;
@@ -50,5 +50,3 @@ export const FilterPeriode = ({ value, onChange }: FilterPeriodeProps) => {
     </div>
   );
 };
-
-export default FilterPeriode;

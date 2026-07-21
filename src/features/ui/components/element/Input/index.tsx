@@ -7,7 +7,7 @@ function resolveInputPadding(inputClassName?: boolean | string): string {
   return inputClassName === true ? "py-2" : "py-3.5";
 }
 
-export function Input({
+export default function Input({
   ref,
   label,
   id,
