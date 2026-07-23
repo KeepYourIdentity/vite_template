@@ -73,6 +73,6 @@
     "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz"
   },
   "allowScripts": {
-    "sharp@0.34.5": true
+    "sharp@0.35.3": true
   }
 }

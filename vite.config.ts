@@ -1,8 +1,8 @@
+import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import path from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import tailwindcss from "@tailwindcss/vite";
-import react from "@vitejs/plugin-react";
 import { defineConfig, loadEnv } from "vite";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 
@@ -25,16 +25,14 @@ export default defineConfig(({ mode }: { mode: string }) => {
         jpeg: { quality: 70 },
         jpg: { quality: 70 },
         png: { quality: 70 },
-        // Mengonversi otomatis ke format modern WebP/AVIF jika diinginkan
         webp: { lossless: true },
-        // Tambahan untuk membersihkan file SVG dari metadata desain
         svg: {
           plugins: [
             {
               name: "preset-default",
               params: {
                 overrides: {
-                  cleanupIds: false, // Penting agar animasi / referensi ID SVG di React tidak rusak
+                  cleanupIds: false,
                 },
               },
             },
@@ -59,13 +57,18 @@ export default defineConfig(({ mode }: { mode: string }) => {
       hmr: {
         overlay: false,
       },
+      proxy: {
+        "/api": {
+          target: "http://192.168.200.169:6080", // change this following backend api address
+          changeOrigin: true,
+        },
+      },
     },
     build: {
       rolldownOptions: {
         external: [
           fileURLToPath(new URL("./src/features/mocks", import.meta.url)),
-          fileURLToPath(new URL("./src/features/Development", import.meta.url)),
-          fileURLToPath(new URL("./src/features/development", import.meta.url)),
+          fileURLToPath(new URL("./src/features/ui/development", import.meta.url)),
         ],
       },
     },
