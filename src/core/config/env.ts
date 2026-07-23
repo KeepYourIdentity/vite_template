@@ -15,7 +15,7 @@ const schema = z.object({
     .transform((val) => val.replace(/^["'`]+|["'`]+$/g, ""))
     .pipe(z.string().trim().min(1).catch("")),
   ENV: z.enum(["Development", "Staging", "Production"]),
-  SERVER_URL: z.url(),
+  SERVER_URL: z.string(),
   SERVER_BASE_PATH: z
     .string()
     .transform((val) => val.replace(/^["'`]+|["'`]+$/g, ""))

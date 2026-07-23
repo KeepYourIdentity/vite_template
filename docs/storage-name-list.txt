@@ -1,0 +1,11 @@
+=== Session Storage ===
+sessionURL      | tempat menyimpan URL di sesi tersebut
+sessionToken    | tempat menyimpan token di sesi tersebut (deprecated)
+sessionDevice   | tempat menyimpan informasi peramban yang digunakan
+
+=== Local Storage ===
+localMenu       | tempat menyimpan menu samping
+localRole       | tempat menyimpan role pengguna
+localToken      | tempat menyimpan token (deprecated)
+localDarkTheme  | tempat menyimpan nilai benar atas kebutuhan tema gelap
+localUserInfo   | tempat menyimpan informasi pengguna website (not-implemented)
